@@ -1,4 +1,5 @@
 const { createEnum } = require("./utils");
+const { CommandError } = require("./errors");
 
 const COMMANDS = createEnum(["add", "show all", "play", "show unplayed", "quit"]);
 
@@ -7,8 +8,7 @@ const CommandChecker = ({ onAdd, onShowAll, onPlay, onShowUnplayed, onQuit }) =>
     console.log(`check:`, input);
     
     if (!input || typeof input !== "string") {
-      console.warn(`Command ${input} isn't a string.`);
-      return;
+      throw CommandError(`${input} isn't a string.`, input);
     }
 
     relayCommand(input);
@@ -33,8 +33,7 @@ const CommandChecker = ({ onAdd, onShowAll, onPlay, onShowUnplayed, onQuit }) =>
         break;
       
       default:
-        console.warn(`Command Checker: '${input}' not supported.`);
-        break;
+        throw CommandError(`'${input}' not supported.`, input);
     }
   }
 
@@ -45,7 +44,7 @@ const CommandChecker = ({ onAdd, onShowAll, onPlay, onShowUnplayed, onQuit }) =>
 
 const confirmCallback = (name, arg) => {
   if (!arg) {
-    console.warn(`${name} is missing from Command Checker.`);
+    console.warn(`${name} callback is missing from Command Checker.`);
     return false;
   }
   if (typeof arg !== "function") {

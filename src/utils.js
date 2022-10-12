@@ -1,4 +1,4 @@
-function createEnum(values) {
+const createEnum = (values) => {
   const enumObject = {};
   for (const val of values) {
     enumObject[val] = val;
@@ -6,4 +6,9 @@ function createEnum(values) {
   return Object.freeze(enumObject);
 }
 
-module.exports = { createEnum }
+const capitalize = (str) => {
+  if (typeof str !== 'string') { return ""; }
+  return str[0].toUpperCase() + str.slice(1);
+}
+
+module.exports = { capitalize, createEnum }

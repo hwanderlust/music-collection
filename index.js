@@ -10,6 +10,6 @@ const Prompter = require("./src/prompter");
     prompter.init();
     
   } catch (error) {
-    console.error(`Top error:`, error);
+    console.error(`Main error:`, error);
   }
 })();
