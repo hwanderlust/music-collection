@@ -23,6 +23,6 @@ Get a list of unplayed albums by an artist
 Quit the program
 - quit
 
-## Program Stipulations
+## Program Limitations
 - There can never be two albums with the same title, even if they have different artists; you cannot add two albums with the same title
 - There isn't a persistence mechanism (i.e. a database). Data is stored in memory and will be empty each time the program starts.

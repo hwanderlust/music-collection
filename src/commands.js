@@ -1,9 +1,23 @@
 const { createEnum } = require("./utils");
 const { CommandError } = require("./errors");
 
-const COMMANDS = createEnum(["add", "show all", "play", "show unplayed", "quit"]);
+const COMMANDS = createEnum([
+  "add", 
+  "show all", 
+  "play", 
+  "show unplayed", 
+  "show unplayed by artist", 
+  "quit"
+]);
 
-const CommandChecker = ({ onAdd, onShowAll, onPlay, onShowUnplayed, onQuit }) => {
+const CommandChecker = ({ 
+  onAdd, 
+  onShowAll, 
+  onPlay, 
+  onShowUnplayed, 
+  onShowUnplayedByArtist, 
+  onQuit 
+}) => {
   const check = (input) => {
     console.log(`check:`, input);
     
@@ -20,12 +34,23 @@ const CommandChecker = ({ onAdd, onShowAll, onPlay, onShowUnplayed, onQuit }) =>
 
     switch (safeInput) {
       case COMMANDS.add:
+        handleOnAdd(onAdd);
         break;
+
       case COMMANDS["show all"]:
+        handleOnShowAll(onShowAll);
         break;
+
       case COMMANDS.play:
+        handleOnPlay(onPlay);
         break;
+
       case COMMANDS["show unplayed"]:
+        handleOnShowUnplayed(onShowUnplayed);
+        break;
+
+      case COMMANDS["show unplayed by artist"]:
+        handleOnShowUnplayedByArtist(onShowUnplayedByArtist);
         break;
 
       case COMMANDS.quit:
@@ -54,6 +79,31 @@ const confirmCallback = (name, arg) => {
   return true;
 }
 
+const handleOnAdd = (onAdd) => {
+  if (confirmCallback(COMMANDS.add, onQuit)) {
+    onAdd();
+  }
+}
+const handleOnShowAll = (onShowAll) => {
+  if (confirmCallback(COMMANDS["show all"], onShowAll)) {
+    onShowAll();
+  }
+}
+const handleOnPlay = (onPlay) => {
+  if (confirmCallback(COMMANDS.play, onPlay)) {
+    onPlay();
+  }
+}
+const handleOnShowUnplayed = (onShowUnplayed) => {
+  if (confirmCallback(COMMANDS["show unplayed"], onShowUnplayed)) {
+    onShowUnplayed();
+  }
+}
+const handleOnShowUnplayedByArtist = (onShowUnplayedByArtist) => {
+  if (confirmCallback(COMMANDS["show unplayed by artist"], onShowUnplayedByArtist)) {
+    onShowUnplayedByArtist();
+  }
+}
 const handleOnQuit = (onQuit) => {
   if (confirmCallback(COMMANDS.quit, onQuit)) {
     onQuit();

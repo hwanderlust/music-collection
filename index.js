@@ -2,6 +2,7 @@ const readline = require('readline/promises');
 const { stdin: input, stdout: output } = require('process');
 
 const Prompter = require("./src/prompter");
+const { ERRORS } = require("./src/errors");
 
 (function main() {
   try {
@@ -10,6 +11,11 @@ const Prompter = require("./src/prompter");
     prompter.init();
     
   } catch (error) {
-    console.error(`Main error:`, error);
+    // TODO: review this again
+    if (error.type === ERRORS.artist) {
+      console.error(`Main error:`, error);
+    } else {
+      throw error;
+    }
   }
 })();

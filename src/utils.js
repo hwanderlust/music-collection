@@ -11,4 +11,25 @@ const capitalize = (str) => {
   return str[0].toUpperCase() + str.slice(1);
 }
 
-module.exports = { capitalize, createEnum }
+const toggleAndSetProperty = (obj, property, newValue) => {
+  if (!obj || !property || !newValue || typeof property !== "string") {
+    console.warn(`Cannot update ${obj.constructor.name}'s '${property}.'`);
+    return;
+  }
+  // Make property editable again
+  Object.defineProperties(obj, {
+    [property]: { value: newValue, writable: true, configurable: true },
+  });
+  // update property's value
+  obj[property] = newValue;
+  // Make property non-editable again
+  Object.defineProperties(obj, {
+    [property]: { value: newValue, writable: false, configurable: true },
+  });
+}
+
+module.exports = { 
+  capitalize, 
+  createEnum,
+  toggleAndSetProperty,
+ }

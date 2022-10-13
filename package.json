@@ -1,0 +1,22 @@
+{
+  "name": "music-collection",
+  "version": "1.0.0",
+  "description": "A small system for managing your music collection. The system is accessible from the command line. You can create a list of albums by artists and track if you've played/listened to them.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hwanderlust/music-collection.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hwanderlust/music-collection/issues"
+  },
+  "homepage": "https://github.com/hwanderlust/music-collection#readme",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  }
+}
