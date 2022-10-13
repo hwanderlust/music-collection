@@ -44,7 +44,7 @@ const CommandChecker = ({
       return;
     }
     if (safeInput.startsWith("show unplayed by")) {
-      handleOnShowUnplayedByArtist(onShowUnplayedByArtist);
+      handleOnShowUnplayedByArtist(input, onShowUnplayedByArtist);
       return;
     }
     if (safeInput.startsWith("play")) {
@@ -144,11 +144,17 @@ const handleOnShowUnplayed = (onShowUnplayed) => {
     onShowUnplayed();
   }
 };
-const handleOnShowUnplayedByArtist = (onShowUnplayedByArtist) => {
+const handleOnShowUnplayedByArtist = (name, onShowUnplayedByArtist) => {
+  const [artistName] = getQuotes(name);
+
+  if (!artistName) {
+    console.warn(`Cannot add "${name}". Missing the album title.`);
+    return;
+  }
   if (
     confirmCallback(COMMANDS["show unplayed by artist"], onShowUnplayedByArtist)
   ) {
-    onShowUnplayedByArtist();
+    onShowUnplayedByArtist(artistName);
   }
 };
 const handleOnQuit = (onQuit) => {
