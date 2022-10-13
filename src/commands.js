@@ -4,6 +4,7 @@ const { CommandError } = require("./errors");
 const COMMANDS = createEnum([
   "add", 
   "show all", 
+  "show all by artist", 
   "play", 
   "show unplayed", 
   "show unplayed by artist", 
@@ -13,6 +14,7 @@ const COMMANDS = createEnum([
 const CommandChecker = ({ 
   onAdd, 
   onShowAll, 
+  onShowAllByArtist,
   onPlay, 
   onShowUnplayed, 
   onShowUnplayedByArtist, 
@@ -32,6 +34,7 @@ const CommandChecker = ({
     const safeInput = input.trim().toLowerCase();
     console.log(`relay:`, safeInput);
 
+    // TODO: remove this switch
     switch (safeInput) {
       case COMMANDS.add:
         handleOnAdd(onAdd);
@@ -39,6 +42,10 @@ const CommandChecker = ({
 
       case COMMANDS["show all"]:
         handleOnShowAll(onShowAll);
+        break;
+
+      case COMMANDS["show all by artist"]:
+        handleOnShowAllByArtist(onShowAllByArtist);
         break;
 
       case COMMANDS.play:
@@ -87,6 +94,11 @@ const handleOnAdd = (onAdd) => {
 const handleOnShowAll = (onShowAll) => {
   if (confirmCallback(COMMANDS["show all"], onShowAll)) {
     onShowAll();
+  }
+}
+const handleOnShowAllByArtist = (onShowAllByArtist) => {
+  if (confirmCallback(COMMANDS["show all by artist"], onShowAllByArtist)) {
+    onShowAllByArtist();
   }
 }
 const handleOnPlay = (onPlay) => {

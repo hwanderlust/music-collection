@@ -41,9 +41,10 @@ const prompter = ({ readline, input, output }) => {
 const greet = () => {
   console.log(`Welcome to your music collection!\n`);
   console.log(`Available actions are:`);
+  console.log(`- add "album title" by "artist name"`);
   console.log(`- show all`);
   console.log(`- show all by "artist name"`);
-  console.log(`- play "album name"`);
+  console.log(`- play "album title"`);
   console.log(`- show unplayed`);
   console.log(`- show unplayed by "artist name"`);
   console.log(`- quit\n`);
