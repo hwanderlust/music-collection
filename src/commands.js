@@ -1,4 +1,4 @@
-const { createEnum, matchAllQuotes } = require("./utils");
+const { createEnum, getQuotes } = require("./utils");
 const { CommandError } = require("./errors");
 
 const COMMANDS = createEnum([
@@ -47,15 +47,15 @@ const CommandChecker = ({
       handleOnShowUnplayedByArtist(onShowUnplayedByArtist);
       return;
     }
+    if (safeInput.startsWith("play")) {
+      handleOnPlay(input, onPlay);
+      return;
+    }
 
     // TODO: remove this switch
     switch (safeInput) {
       case COMMANDS["show all"]:
         handleOnShowAll(onShowAll);
-        break;
-
-      case COMMANDS.play:
-        handleOnPlay(onPlay);
         break;
 
       case COMMANDS["show unplayed"]:
@@ -89,7 +89,11 @@ const confirmCallback = (name, arg) => {
 };
 
 const handleOnAdd = (input, onAdd) => {
-  const [albumTitle, artistName] = input.match(matchAllQuotes);
+  if (!input || typeof input !== "string") {
+    return;
+  }
+
+  const [albumTitle, artistName] = getQuotes(input);
 
   if (!albumTitle || !artistName) {
     console.warn(
@@ -99,9 +103,7 @@ const handleOnAdd = (input, onAdd) => {
   }
 
   if (confirmCallback(COMMANDS.add, onAdd)) {
-    const albumWithoutQuotes = albumTitle.slice(1, -1);
-    const artistWithoutQuotes = artistName.slice(1, -1);
-    onAdd(albumWithoutQuotes, artistWithoutQuotes);
+    onAdd(albumTitle, artistName);
   }
 };
 const handleOnShowAll = (onShowAll) => {
@@ -114,9 +116,16 @@ const handleOnShowAllByArtist = (onShowAllByArtist) => {
     onShowAllByArtist();
   }
 };
-const handleOnPlay = (onPlay) => {
+const handleOnPlay = (title, onPlay) => {
+  const [albumTitle] = getQuotes(title);
+
+  if (!albumTitle) {
+    console.warn(`Cannot add "${title}". Missing the album title.`);
+    return;
+  }
+
   if (confirmCallback(COMMANDS.play, onPlay)) {
-    onPlay();
+    onPlay(albumTitle);
   }
 };
 const handleOnShowUnplayed = (onShowUnplayed) => {

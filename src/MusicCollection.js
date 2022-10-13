@@ -20,6 +20,7 @@ const createMusicCollection = () => {
     showAll() {
       const albums = Album.allList();
       if (albums && Array.isArray(albums)) {
+        printEmptyLine();
         albums.forEach((album) => {
           console.log(
             `"${album.title}" by ${album.artist.name} (${album.playedStatus})`
@@ -31,10 +32,11 @@ const createMusicCollection = () => {
     playAlbum(albumName) {
       const album = Album.findByName(albumName);
       if (!album) {
-        console.warn(`Couldn't find an album by this title: ${albumName}.`);
+        console.warn(`Couldn't find an album by this title: "${albumName}."`);
         return;
       }
       album.play();
+      printEmptyLine();
       console.log(`You're listening to "${album.title}"`);
     }
 
@@ -116,6 +118,7 @@ const byArtist = () => {};
 const byArtistAndUnplayedStatus = () => {};
 
 // loggers
+const printEmptyLine = () => console.log("");
 const printWithStatus = () => {};
 const printWithoutStatus = () => {};
 

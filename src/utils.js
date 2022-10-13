@@ -1,3 +1,9 @@
+// PRIVATE
+
+const matchAllQuotes = new RegExp(/['"]([^'"]*)['"]/g);
+
+// PUBLIC
+
 const createEnum = (values) => {
   const enumObject = {};
   for (const val of values) {
@@ -13,7 +19,8 @@ const capitalize = (str) => {
   return str[0].toUpperCase() + str.slice(1);
 };
 
-const matchAllQuotes = new RegExp(/['"]([^'"]*)['"]/g);
+const getQuotes = (str) =>
+  str.match(matchAllQuotes).map((strEl) => strEl.slice(1, -1));
 
 const toggleAndSetProperty = (obj, property, newValue) => {
   if (!obj || !property || !newValue || typeof property !== "string") {
@@ -35,6 +42,6 @@ const toggleAndSetProperty = (obj, property, newValue) => {
 module.exports = {
   capitalize,
   createEnum,
-  matchAllQuotes,
+  getQuotes,
   toggleAndSetProperty,
 };
