@@ -1,26 +1,14 @@
-const { CommandChecker } = require("./commands");
 const { PrompterError } = require("./errors");
-const MusicCollection = require("./MusicCollection");
 
 const prompter = ({ readline, input, output }) => {
   let instance;
 
-  const init = () => {
+  const init = (commandChecker) => {
     const rl = readline.createInterface({ input, output });
     instance = rl;
 
     greet();
 
-    const musicCollection = MusicCollection();
-    const commandChecker = CommandChecker({
-      onAdd: musicCollection.addAlbum,
-      onShowAll: musicCollection.showAll,
-      onPlay: musicCollection.playAlbum,
-      onShowUnplayed: musicCollection.showUnplayed,
-      onShowUnplayedByArtist: musicCollection.showUnplayedByArtist,
-      onQuit: quit,
-    });
-    
     rl.on("line", (line) => {
       try {
         console.log(`Received: ${line}`);
