@@ -8,7 +8,7 @@ const createMusicCollection = () => {
     static name = "MusicCollection";
 
     addAlbum(albumName, artistName) {
-      const artist = new Artist(artistName);
+      const artist = Artist.findByName(artistName) || new Artist(artistName);
       if (!artist) {
         console.warn(`Can't find artist: ${artistName}`);
         return;

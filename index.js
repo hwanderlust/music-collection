@@ -14,6 +14,7 @@ const Prompter = require("./src/prompter");
     const commandChecker = CommandChecker({
       onAdd: musicCollection.addAlbum,
       onShowAll: musicCollection.showAll,
+      onShowAllByArtist: musicCollection.showAllByArtist,
       onPlay: musicCollection.playAlbum,
       onShowUnplayed: musicCollection.showUnplayed,
       onShowUnplayedByArtist: musicCollection.showUnplayedByArtist,

@@ -40,7 +40,7 @@ const CommandChecker = ({
       return;
     }
     if (safeInput.startsWith("show all by")) {
-      handleOnShowAllByArtist(onShowAllByArtist);
+      handleOnShowAllByArtist(input, onShowAllByArtist);
       return;
     }
     if (safeInput.startsWith("show unplayed by")) {
@@ -97,7 +97,7 @@ const handleOnAdd = (input, onAdd) => {
 
   if (!albumTitle || !artistName) {
     console.warn(
-      `Cannot add "${input}". Missing either the album title or artist name.`
+      `Cannot add "${input}". Missing either the album title or artist name. Maybe quotation marks are missing?`
     );
     return;
   }
@@ -111,9 +111,20 @@ const handleOnShowAll = (onShowAll) => {
     onShowAll();
   }
 };
-const handleOnShowAllByArtist = (onShowAllByArtist) => {
+const handleOnShowAllByArtist = (input, onShowAllByArtist) => {
+  if (!input || typeof input !== "string") {
+    return;
+  }
+
+  const [artistName] = getQuotes(input);
+
+  if (!artistName) {
+    console.warn(`Cannot complete "${input}". Missing either the artist name.`);
+    return;
+  }
+
   if (confirmCallback(COMMANDS["show all by artist"], onShowAllByArtist)) {
-    onShowAllByArtist();
+    onShowAllByArtist(artistName);
   }
 };
 const handleOnPlay = (title, onPlay) => {
