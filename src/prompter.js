@@ -8,6 +8,9 @@ const prompter = ({ readline, input, output }) => {
   const init = () => {
     const rl = readline.createInterface({ input, output });
     instance = rl;
+
+    greet();
+
     const musicCollection = MusicCollection();
     const commandChecker = CommandChecker({
       onAdd: musicCollection.addAlbum,
@@ -45,6 +48,17 @@ const prompter = ({ readline, input, output }) => {
   }
 
   return { init, quit }
+}
+
+const greet = () => {
+  console.log(`Welcome to your music collection!\n`);
+  console.log(`Available actions are:`);
+  console.log(`- show all`);
+  console.log(`- show all by "artist name"`);
+  console.log(`- play "album name"`);
+  console.log(`- show unplayed`);
+  console.log(`- show unplayed by "artist name"`);
+  console.log(`- quit\n`);
 }
 
 module.exports = prompter;

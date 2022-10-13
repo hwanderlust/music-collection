@@ -6,7 +6,6 @@ const { ERRORS } = require("./src/errors");
 
 (function main() {
   try {
-    console.log(`Welcome to your music collection!`);
     const prompter = Prompter({ readline, input, output });
     prompter.init();
     
