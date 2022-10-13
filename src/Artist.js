@@ -10,7 +10,6 @@ class Artist {
   name;
 
   constructor(name) {
-    console.log(`Artist contructor`, name);
     const existingInstance = Artist.findByName(name);
     if (existingInstance) {
       throw ArtistError(`'${name}' already exists.`);

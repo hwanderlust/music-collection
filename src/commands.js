@@ -11,6 +11,16 @@ const COMMANDS = createEnum([
   "quit",
 ]);
 
+const COMMAND_ERRORS = {
+  missingCallback: (name) =>
+    `${name} callback is missing from Command Checker.`,
+  missingData: (input) =>
+    `Cannot complete "${input}". Missing data. Maybe quotation marks are missing?`,
+  notAString: (input) => `${input} isn't a string.`,
+  notFunction: (name) => `${name} isn't a function for Command Checker.`,
+  unsupportedAction: (input) => `'${input}' not supported.`,
+};
+
 const CommandChecker = ({
   onAdd,
   onShowAll,
@@ -21,19 +31,15 @@ const CommandChecker = ({
   onQuit,
 }) => {
   const check = (input) => {
-    console.log(`check:`, input);
-
     if (!input || typeof input !== "string") {
-      throw CommandError(`${input} isn't a string.`, input);
+      throw CommandError(COMMAND_ERRORS.notAString(input), input);
     }
-
     relayCommand(input);
   };
 
   // TODO: move outside of CommandChecker
   const relayCommand = (input) => {
     const safeInput = input.trim().toLowerCase();
-    console.log(`relay:`, safeInput);
 
     if (safeInput.startsWith("add")) {
       handleOnAdd(input, onAdd);
@@ -52,7 +58,6 @@ const CommandChecker = ({
       return;
     }
 
-    // TODO: remove this switch
     switch (safeInput) {
       case COMMANDS["show all"]:
         handleOnShowAll(onShowAll);
@@ -67,7 +72,7 @@ const CommandChecker = ({
         break;
 
       default:
-        throw CommandError(`'${input}' not supported.`, input);
+        throw CommandError(COMMAND_ERRORS.unsupportedAction(input), input);
     }
   };
 
@@ -76,91 +81,61 @@ const CommandChecker = ({
   };
 };
 
+const handleOnAdd = (input, onAdd) => {
+  const [albumTitle, artistName] = extractAndCheckQuotes(2, input);
+  confirmCallback(COMMANDS.add, onAdd);
+  onAdd(albumTitle, artistName);
+};
+
+const handleOnShowAll = (onShowAll) => {
+  confirmCallback(COMMANDS["show all"], onShowAll);
+  onShowAll();
+};
+
+const handleOnShowAllByArtist = (input, onShowAllByArtist) => {
+  const [artistName] = extractAndCheckQuotes(1, input);
+  confirmCallback(COMMANDS["show all by artist"], onShowAllByArtist);
+  onShowAllByArtist(artistName);
+};
+
+const handleOnPlay = (title, onPlay) => {
+  const [albumTitle] = extractAndCheckQuotes(1, title);
+  confirmCallback(COMMANDS.play, onPlay);
+  onPlay(albumTitle);
+};
+
+const handleOnShowUnplayed = (onShowUnplayed) => {
+  confirmCallback(COMMANDS["show unplayed"], onShowUnplayed);
+  onShowUnplayed();
+};
+
+const handleOnShowUnplayedByArtist = (name, onShowUnplayedByArtist) => {
+  const [artistName] = extractAndCheckQuotes(1, name);
+  confirmCallback(COMMANDS["show unplayed by artist"], onShowUnplayedByArtist);
+  onShowUnplayedByArtist(artistName);
+};
+
+const handleOnQuit = (onQuit) => {
+  confirmCallback(COMMANDS.quit, onQuit);
+  onQuit();
+};
+
 const confirmCallback = (name, arg) => {
   if (!arg) {
-    console.warn(`${name} callback is missing from Command Checker.`);
-    return false;
+    throw CommandError(COMMAND_ERRORS.missingCallback(name), name);
   }
   if (typeof arg !== "function") {
-    console.warn(`${name} isn't a function for Command Checker.`);
-    return false;
-  }
-  return true;
-};
-
-const handleOnAdd = (input, onAdd) => {
-  if (!input || typeof input !== "string") {
-    return;
-  }
-
-  const [albumTitle, artistName] = getQuotes(input);
-
-  if (!albumTitle || !artistName) {
-    console.warn(
-      `Cannot add "${input}". Missing either the album title or artist name. Maybe quotation marks are missing?`
-    );
-    return;
-  }
-
-  if (confirmCallback(COMMANDS.add, onAdd)) {
-    onAdd(albumTitle, artistName);
+    throw CommandError(COMMAND_ERRORS.notFunction(name), name);
   }
 };
-const handleOnShowAll = (onShowAll) => {
-  if (confirmCallback(COMMANDS["show all"], onShowAll)) {
-    onShowAll();
-  }
-};
-const handleOnShowAllByArtist = (input, onShowAllByArtist) => {
-  if (!input || typeof input !== "string") {
-    return;
-  }
 
-  const [artistName] = getQuotes(input);
+const extractAndCheckQuotes = (numOfQuotes, input) => {
+  const quotes = getQuotes(input);
 
-  if (!artistName) {
-    console.warn(`Cannot complete "${input}". Missing either the artist name.`);
-    return;
+  if (quotes.length !== numOfQuotes) {
+    throw CommandError(COMMAND_ERRORS.missingData(quotes), quotes);
   }
-
-  if (confirmCallback(COMMANDS["show all by artist"], onShowAllByArtist)) {
-    onShowAllByArtist(artistName);
-  }
-};
-const handleOnPlay = (title, onPlay) => {
-  const [albumTitle] = getQuotes(title);
-
-  if (!albumTitle) {
-    console.warn(`Cannot add "${title}". Missing the album title.`);
-    return;
-  }
-
-  if (confirmCallback(COMMANDS.play, onPlay)) {
-    onPlay(albumTitle);
-  }
-};
-const handleOnShowUnplayed = (onShowUnplayed) => {
-  if (confirmCallback(COMMANDS["show unplayed"], onShowUnplayed)) {
-    onShowUnplayed();
-  }
-};
-const handleOnShowUnplayedByArtist = (name, onShowUnplayedByArtist) => {
-  const [artistName] = getQuotes(name);
-
-  if (!artistName) {
-    console.warn(`Cannot add "${name}". Missing the album title.`);
-    return;
-  }
-  if (
-    confirmCallback(COMMANDS["show unplayed by artist"], onShowUnplayedByArtist)
-  ) {
-    onShowUnplayedByArtist(artistName);
-  }
-};
-const handleOnQuit = (onQuit) => {
-  if (confirmCallback(COMMANDS.quit, onQuit)) {
-    onQuit();
-  }
+  return quotes;
 };
 
 module.exports = { CommandChecker };
