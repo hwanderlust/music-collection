@@ -15,11 +15,10 @@ const prompter = ({ readline, input, output }) => {
         commandChecker.check(line);
       } catch (error) {
         console.error(PrompterError(`Processing line failed.`, error));
-        quit();
         return;
       }
     });
-  }
+  };
 
   const quit = () => {
     const rl = get();
@@ -28,15 +27,17 @@ const prompter = ({ readline, input, output }) => {
     }
     rl.close();
     process.exit(1);
-  }
+  };
 
   const get = () => {
-    if (!instance) { init(); }
+    if (!instance) {
+      init();
+    }
     return instance;
-  }
+  };
 
-  return { init, quit }
-}
+  return { init, quit };
+};
 
 const greet = () => {
   console.log(`Welcome to your music collection!\n`);
@@ -48,6 +49,6 @@ const greet = () => {
   console.log(`- show unplayed`);
   console.log(`- show unplayed by "artist name"`);
   console.log(`- quit\n`);
-}
+};
 
 module.exports = prompter;

@@ -4,7 +4,7 @@
   "description": "A small system for managing your music collection. The system is accessible from the command line. You can create a list of albums by artists and track if you've played/listened to them.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,8 @@
   "homepage": "https://github.com/hwanderlust/music-collection#readme",
   "dependencies": {
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1"
   }
 }

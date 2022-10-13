@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const { createEnum } = require("./utils");
 
 const PLAYED_STATUS = createEnum(["unplayed", "played"]);
@@ -32,8 +32,8 @@ class Album {
 
   static findByName(title) {
     const list = this.allList();
-    const album = list.find(album => 
-      album.title.toLowerCase() === title.trim().toLowerCase()
+    const album = list.find(
+      (album) => album.title.toLowerCase() === title.trim().toLowerCase()
     );
     return album;
   }

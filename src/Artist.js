@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const { ArtistError } = require("./errors");
 const { toggleAndSetProperty } = require("./utils");
 
@@ -10,6 +10,7 @@ class Artist {
   name;
 
   constructor(name) {
+    console.log(`Artist contructor`, name);
     const existingInstance = Artist.findByName(name);
     if (existingInstance) {
       throw ArtistError(`'${name}' already exists.`);
@@ -37,8 +38,8 @@ class Artist {
 
   static findByName(name) {
     const list = this.allList();
-    const artist = list.find(artist => 
-      artist.name.toLowerCase() === name.trim().toLowerCase()
+    const artist = list.find(
+      (artist) => artist.name.toLowerCase() === name.trim().toLowerCase()
     );
     return artist;
   }
@@ -50,7 +51,6 @@ class Artist {
   remove() {
     Artist.#all.delete(this.id);
   }
-
 }
 
 module.exports = Artist;

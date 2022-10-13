@@ -1,5 +1,5 @@
-const readline = require('readline/promises');
-const { stdin: input, stdout: output } = require('process');
+const readline = require("readline/promises");
+const { stdin: input, stdout: output } = require("process");
 
 const MusicCollection = require("./src/MusicCollection");
 const { CommandChecker } = require("./src/commands");
@@ -21,7 +21,6 @@ const Prompter = require("./src/prompter");
     });
 
     prompter.init(commandChecker);
-    
   } catch (error) {
     // TODO: review this again
     if (error.type === ERRORS.artist) {
