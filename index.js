@@ -23,8 +23,7 @@ const Prompter = require("./src/prompter");
 
     prompter.init(commandChecker);
   } catch (error) {
-    // TODO: review this again
-    if (error.type === ERRORS.artist) {
+    if (error.type && error.type !== ERRORS.base) {
       console.error(`Main error:`, error);
     } else {
       throw error;
