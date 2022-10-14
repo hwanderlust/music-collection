@@ -18,10 +18,12 @@ const createMusicCollection = () => {
 
     showAll() {
       const albums = Album.allList();
-      if (albums && Array.isArray(albums)) {
+      if (albums && Array.isArray(albums) && albums.length > 0) {
         const messages = albums.map(toPrintAlbumWithArtistAndStatus);
         sendGroupMessages(messages);
+        return;
       }
+      sendSingleMessage(nothingMessage);
     }
 
     playAlbum(albumName) {
@@ -39,32 +41,38 @@ const createMusicCollection = () => {
     showAllByArtist(artistName) {
       const artist = findArtistOrThrow(artistName);
       const albums = Album.allList();
-      if (albums && Array.isArray(albums)) {
+      if (albums && Array.isArray(albums) && albums.length > 0) {
         const filteredAlbums = albums.filter(byArtist.bind(this, artist));
         const messages = filteredAlbums.map(toPrintAlbumWithArtistAndStatus);
         sendGroupMessages(messages);
+        return;
       }
+      sendSingleMessage(nothingMessage);
     }
 
     showUnplayed() {
       const albums = Album.allList();
-      if (albums && Array.isArray(albums)) {
+      if (albums && Array.isArray(albums) && albums.length > 0) {
         const filteredAlbums = albums.filter(byUnplayedStatus);
         const messages = filteredAlbums.map(toPrintAlbumWithArtist);
         sendGroupMessages(messages);
+        return;
       }
+      sendSingleMessage(nothingMessage);
     }
 
     showUnplayedByArtist(artistName) {
       const artist = findArtistOrThrow(artistName);
       const albums = Album.allList();
-      if (albums && Array.isArray(albums)) {
+      if (albums && Array.isArray(albums) && albums.length > 0) {
         const filteredAlbums = albums.filter(
           byArtistAndUnplayedStatus.bind(this, artist)
         );
         const messages = filteredAlbums.map(toPrintAlbumWithArtist);
         sendGroupMessages(messages);
+        return;
       }
+      sendSingleMessage(nothingMessage);
     }
   }
 
@@ -77,6 +85,8 @@ const createMusicCollection = () => {
 };
 
 // helpers
+
+const nothingMessage = "There's nothing to show.";
 
 const findArtistOrCreate = (artistName) => {
   const artist = Artist.findByName(artistName) || new Artist(artistName);
