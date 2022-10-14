@@ -4,14 +4,6 @@ const matchAllQuotes = new RegExp(/['"]([^'"]*)['"]/g);
 
 // PUBLIC
 
-const createEnum = (values) => {
-  const enumObject = {};
-  for (const val of values) {
-    enumObject[val] = val;
-  }
-  return Object.freeze(enumObject);
-};
-
 const capitalize = (str) => {
   if (typeof str !== "string") {
     return "";
@@ -19,12 +11,32 @@ const capitalize = (str) => {
   return str[0].toUpperCase() + str.slice(1);
 };
 
-const getQuotes = (str) =>
-  str.match(matchAllQuotes).map((strEl) => strEl.slice(1, -1));
+const createEnum = (values) => {
+  const enumObject = {};
+  if (Array.isArray(values)) {
+    for (const val of values) {
+      enumObject[val] = val;
+    }
+  }
+  return Object.freeze(enumObject);
+};
+
+const getQuotes = (str) => {
+  if (typeof str !== "string") {
+    return [];
+  }
+  return str.match(matchAllQuotes).map((strEl) => strEl.slice(1, -1));
+};
 
 const toggleAndSetProperty = (obj, property, newValue) => {
-  if (!obj || !property || !newValue || typeof property !== "string") {
-    console.warn(`Cannot update ${obj.constructor.name}'s '${property}.'`);
+  if (
+    !obj ||
+    !property ||
+    !newValue ||
+    typeof property !== "string" ||
+    typeof obj !== "object"
+  ) {
+    console.warn(`Cannot update ${obj?.constructor?.name}'s '${property}.'`);
     return;
   }
   // Make property editable again

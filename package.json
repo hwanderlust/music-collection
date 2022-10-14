@@ -4,7 +4,8 @@
   "description": "A small system for managing your music collection. The system is accessible from the command line. You can create a list of albums by artists and track if you've played/listened to them.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "jest": "^29.1.2",
     "prettier": "^2.7.1"
   }
 }
