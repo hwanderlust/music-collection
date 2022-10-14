@@ -1,6 +1,13 @@
 const { capitalize, createEnum } = require("./utils");
 
-const ERRORS = createEnum(["artist", "base", "command", "prompter"]);
+const ERRORS = createEnum([
+  "album",
+  "artist",
+  "base",
+  "command",
+  "music collection",
+  "prompter",
+]);
 
 const Error = (type, message, data) => {
   let baseError;
@@ -14,12 +21,18 @@ const Error = (type, message, data) => {
   };
 };
 
+const AlbumError = (message, data) =>
+  Error(ERRORS.artist, buildMessage(ERRORS.album, message), data);
 const ArtistError = (message, data) =>
   Error(ERRORS.artist, buildMessage(ERRORS.artist, message), data);
-// TODO: AlbumError
-// TODO: MusicCollectionError
 const CommandError = (message, data) =>
   Error(ERRORS.command, buildMessage(ERRORS.command, message), data);
+const MusicCollectionError = (message, data) =>
+  Error(
+    ERRORS.prompter,
+    buildMessage(ERRORS["music collection"], message),
+    data
+  );
 const PrompterError = (message, data) =>
   Error(ERRORS.prompter, buildMessage(ERRORS.prompter, message), data);
 
@@ -28,7 +41,9 @@ const buildMessage = (type, msg) => toName(type) + " " + msg;
 
 module.exports = {
   ERRORS,
+  AlbumError,
   ArtistError,
   CommandError,
+  MusicCollectionError,
   PrompterError,
 };
