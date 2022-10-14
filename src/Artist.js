@@ -24,7 +24,6 @@ class Artist {
     });
 
     Artist.#all.set(this.id, this);
-    return this;
   }
 
   static allList() {

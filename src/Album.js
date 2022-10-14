@@ -1,9 +1,9 @@
 const { v4: uuidv4 } = require("uuid");
-const { createEnum } = require("./utils");
+const Artist = require("./Artist");
+const { AlbumError } = require("./errors");
+const { createEnum, toggleAndSetProperty } = require("./utils");
 
 const PLAYED_STATUS = createEnum(["unplayed", "played"]);
-
-// TOOD: errors
 
 class Album {
   static #all = new Map();
@@ -15,10 +15,27 @@ class Album {
   playedStatus;
 
   constructor(title, artist) {
+    const existingInstance = Album.findByName(title);
+    if (existingInstance) {
+      throw AlbumError(`'${title}' already exists.`);
+    }
+
     this.id = uuidv4();
     this.title = title;
     this.artist = artist;
     this.playedStatus = PLAYED_STATUS.unplayed;
+
+    Object.defineProperties(this, {
+      id: { value: this.id, writable: false, configurable: false },
+      title: { value: this.title, writable: false, configurable: true },
+      artist: { value: this.artist, writable: false, configurable: true },
+      playedStatus: {
+        value: this.playedStatus,
+        writable: false,
+        configurable: true,
+      },
+    });
+
     Album.#all.set(this.id, this);
   }
 
@@ -39,7 +56,20 @@ class Album {
   }
 
   play() {
-    this.playedStatus = PLAYED_STATUS.played;
+    toggleAndSetProperty(this, "playedStatus", PLAYED_STATUS.played);
+  }
+
+  updateArtist(artistName) {
+    const existingArtist = Artist.findByName(artistName);
+    toggleAndSetProperty(
+      this,
+      "artist",
+      existingArtist || new Artist(artistName.trim())
+    );
+  }
+
+  updateTitle(title) {
+    toggleAndSetProperty(this, "title", title.trim());
   }
 }
 
