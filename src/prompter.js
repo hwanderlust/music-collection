@@ -1,4 +1,5 @@
 const { PrompterError } = require("./errors");
+const { sendSingleMessage } = require("./utils");
 
 const prompter = ({ readline, input, output }) => {
   let instance;
@@ -11,7 +12,6 @@ const prompter = ({ readline, input, output }) => {
 
     rl.on("line", (line) => {
       try {
-        console.log(`Received: ${line}`);
         commandChecker.check(line);
       } catch (error) {
         console.error(PrompterError(`Processing line failed.`, error));
@@ -25,6 +25,7 @@ const prompter = ({ readline, input, output }) => {
     if (!rl) {
       throw PrompterError(`Missing Readline instance.`, rl);
     }
+    sendSingleMessage("Bye!");
     rl.close();
     process.exit(1);
   };

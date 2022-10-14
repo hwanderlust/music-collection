@@ -28,6 +28,20 @@ const getQuotes = (str) => {
   return str.match(matchAllQuotes).map((strEl) => strEl.slice(1, -1));
 };
 
+const sendSingleMessage = (msg) => {
+  console.log(`\n${msg}\n`);
+};
+
+const sendGroupMessages = (msgs) => {
+  if (Array.isArray(msgs)) {
+    console.log("");
+    msgs.forEach((msg) => {
+      console.log(msg);
+    });
+    console.log("");
+  }
+};
+
 const toggleAndSetProperty = (obj, property, newValue) => {
   if (
     !obj ||
@@ -55,5 +69,7 @@ module.exports = {
   capitalize,
   createEnum,
   getQuotes,
+  sendSingleMessage,
+  sendGroupMessages,
   toggleAndSetProperty,
 };

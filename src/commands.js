@@ -133,7 +133,7 @@ const extractAndCheckQuotes = (numOfQuotes, input) => {
   const quotes = getQuotes(input);
 
   if (quotes.length !== numOfQuotes) {
-    throw CommandError(COMMAND_ERRORS.missingData(quotes), quotes);
+    throw CommandError(COMMAND_ERRORS.missingData(quotes), input);
   }
   return quotes;
 };

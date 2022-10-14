@@ -1,5 +1,7 @@
 const Artist = require("./Artist");
 const Album = require("./Album");
+const { sendSingleMessage, sendGroupMessages } = require("./utils");
+const { MusicCollectionError } = require("./errors");
 
 const createMusicCollection = () => {
   let instance;
@@ -8,87 +10,60 @@ const createMusicCollection = () => {
     static name = "MusicCollection";
 
     addAlbum(albumName, artistName) {
-      const artist = Artist.findByName(artistName) || new Artist(artistName);
-      if (!artist) {
-        console.warn(`Can't find artist: ${artistName}`);
-        return;
-      }
+      const artist = findArtistOrCreate(artistName);
       const album = new Album(albumName, artist);
+      sendSingleMessage(`Added "${album.title}" by ${artist.name}`);
       return album;
     }
 
     showAll() {
       const albums = Album.allList();
       if (albums && Array.isArray(albums)) {
-        printEmptyLine();
-        albums.forEach((album) => {
-          console.log(
-            `"${album.title}" by ${album.artist.name} (${album.playedStatus})`
-          );
-        });
+        const messages = albums.map(toPrintAlbumWithArtistAndStatus);
+        sendGroupMessages(messages);
       }
     }
 
     playAlbum(albumName) {
       const album = Album.findByName(albumName);
       if (!album) {
-        console.warn(`Couldn't find an album by this title: "${albumName}."`);
+        sendSingleMessage(
+          `Couldn't find an album by this title: "${albumName}."`
+        );
         return;
       }
       album.play();
-      printEmptyLine();
-      console.log(`You're listening to "${album.title}"`);
+      sendSingleMessage(`You're listening to "${album.title}"`);
     }
 
     showAllByArtist(artistName) {
-      const artist = Artist.findByName(artistName);
-      if (!artist) {
-        console.warn(`Couldn't find an artist by this name: ${artistName}.`);
-        return;
-      }
-
+      const artist = findArtistOrThrow(artistName);
       const albums = Album.allList();
       if (albums && Array.isArray(albums)) {
-        const filteredAlbums = albums.filter(
-          (album) => album.artist.id === artist.id
-        );
-        filteredAlbums.forEach((album) => {
-          console.log(
-            `"${album.title}" by ${album.artist.name} (${album.playedStatus})`
-          );
-        });
+        const filteredAlbums = albums.filter(byArtist.bind(this, artist));
+        const messages = filteredAlbums.map(toPrintAlbumWithArtistAndStatus);
+        sendGroupMessages(messages);
       }
     }
 
     showUnplayed() {
       const albums = Album.allList();
       if (albums && Array.isArray(albums)) {
-        const filteredAlbums = albums.filter(
-          (album) => album.playedStatus === "unplayed"
-        );
-        filteredAlbums.forEach((album) => {
-          console.log(`"${album.title}" by ${album.artist.name}`);
-        });
+        const filteredAlbums = albums.filter(byUnplayedStatus);
+        const messages = filteredAlbums.map(toPrintAlbumWithArtist);
+        sendGroupMessages(messages);
       }
     }
 
     showUnplayedByArtist(artistName) {
-      const artist = Artist.findByName(artistName);
-      if (!artist) {
-        console.warn(`Couldn't find an artist by this name: ${artistName}.`);
-        return;
-      }
-
+      const artist = findArtistOrThrow(artistName);
       const albums = Album.allList();
       if (albums && Array.isArray(albums)) {
         const filteredAlbums = albums.filter(
-          (album) =>
-            album.artist.id === artist.id && album.playedStatus === "unplayed"
+          byArtistAndUnplayedStatus.bind(this, artist)
         );
-        // if found, print out line by line
-        filteredAlbums.forEach((album) => {
-          console.log(`"${album.title}" by ${album.artist.name}`);
-        });
+        const messages = filteredAlbums.map(toPrintAlbumWithArtist);
+        sendGroupMessages(messages);
       }
     }
   }
@@ -101,26 +76,35 @@ const createMusicCollection = () => {
   };
 };
 
-// TODO: all below and more error handling
-
 // helpers
-const findArtist = () => {
-  // include if check
-  return undefined;
+
+const findArtistOrCreate = (artistName) => {
+  const artist = Artist.findByName(artistName) || new Artist(artistName);
+  if (!artist) {
+    throw MusicCollectionError(`Something went wrong with: ${artistName}.`);
+  }
+  return artist;
 };
-const getAlbums = () => {
-  // include if check
-  return [];
+
+const findArtistOrThrow = (artistName) => {
+  const artist = Artist.findByName(artistName);
+  if (!artist) {
+    throw MusicCollectionError(
+      `Couldn't find an artist by this name: ${artistName}.`
+    );
+  }
+  return artist;
 };
 
 // predicates
-const byArtist = () => {};
-const byArtistAndUnplayedStatus = () => {};
-
-// loggers
-const printEmptyLine = () => console.log("");
-const printWithStatus = () => {};
-const printWithoutStatus = () => {};
+const byArtist = (artist, album) => album?.artist?.id === artist?.id;
+const byUnplayedStatus = (album) => album?.playedStatus === "unplayed";
+const byArtistAndUnplayedStatus = (artist, album) =>
+  album?.artist?.id === artist?.id && album?.playedStatus === "unplayed";
+const toPrintAlbumWithArtist = (album) =>
+  `"${album?.title}" by ${album?.artist?.name}`;
+const toPrintAlbumWithArtistAndStatus = (album) =>
+  `"${album?.title}" by ${album?.artist?.name} (${album?.playedStatus})`;
 
 const musicCollection = createMusicCollection();
 

@@ -2,10 +2,16 @@ const {
   capitalize,
   createEnum,
   getQuotes,
+  sendSingleMessage,
+  sendGroupMessages,
   toggleAndSetProperty,
 } = require("../src/utils");
 
 describe("Util Tests", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("createEnum()", () => {
     it("returns a frozen empty object for non-array inputs", () => {
       expect(createEnum()).toEqual({});
@@ -83,6 +89,33 @@ describe("Util Tests", () => {
       expect(dummy.test).toBe(123);
       dummy.test = [{ a: 1 }];
       expect(dummy.test).toBe(123);
+    });
+  });
+
+  describe("sendSingleMessage()", () => {
+    it("calls console.log", () => {
+      const spy = jest.spyOn(console, "log");
+      sendSingleMessage();
+      expect(spy).toBeCalled();
+    });
+    it("calls console.log with added empty lines", () => {
+      const spy = jest.spyOn(console, "log");
+      sendSingleMessage("hello");
+      expect(spy).toBeCalledWith(`\nhello\n`);
+    });
+  });
+
+  describe("sendGroupMessages()", () => {
+    it("calls console.log for each msg + 2", () => {
+      const spy = jest.spyOn(console, "log");
+      const messages = ["hello", "world", "hi", "bye"];
+      sendGroupMessages(messages);
+      expect(spy).toBeCalledTimes(messages.length + 2);
+    });
+    it("calls console.log only if input is an array", () => {
+      const spy = jest.spyOn(console, "log");
+      sendGroupMessages(null);
+      expect(spy).toBeCalledTimes(0);
     });
   });
 });
