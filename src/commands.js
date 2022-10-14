@@ -34,45 +34,34 @@ const CommandChecker = ({
     if (!input || typeof input !== "string") {
       throw CommandError(COMMAND_ERRORS.notAString(input), input);
     }
-    relayCommand(input);
-  };
 
-  // TODO: move outside of CommandChecker
-  const relayCommand = (input) => {
-    const safeInput = input.trim().toLowerCase();
+    const state = { executed: false };
+    const lowercaseInput = input.trim().toLowerCase();
 
-    if (safeInput.startsWith("add")) {
-      handleOnAdd(input, onAdd);
-      return;
-    }
-    if (safeInput.startsWith("show all by")) {
-      handleOnShowAllByArtist(input, onShowAllByArtist);
-      return;
-    }
-    if (safeInput.startsWith("show unplayed by")) {
-      handleOnShowUnplayedByArtist(input, onShowUnplayedByArtist);
-      return;
-    }
-    if (safeInput.startsWith("play")) {
-      handleOnPlay(input, onPlay);
-      return;
-    }
+    handleOnAdd({ input, lowercaseInput, state, onAdd });
+    handleOnShowAllByArtist({
+      name: input,
+      lowercaseInput,
+      state,
+      onShowAllByArtist,
+    });
+    handleOnShowUnplayedByArtist({
+      name: input,
+      lowercaseInput,
+      state,
+      onShowUnplayedByArtist,
+    });
+    handleOnPlay({ title: input, lowercaseInput, state, onPlay });
+    handleOnShowAll({ lowercaseInput, state, onShowAll });
+    handleOnShowUnplayed({
+      lowercaseInput,
+      state,
+      onShowUnplayed,
+    });
+    handleOnQuit({ lowercaseInput, state, onQuit });
 
-    switch (safeInput) {
-      case COMMANDS["show all"]:
-        handleOnShowAll(onShowAll);
-        break;
-
-      case COMMANDS["show unplayed"]:
-        handleOnShowUnplayed(onShowUnplayed);
-        break;
-
-      case COMMANDS.quit:
-        handleOnQuit(onQuit);
-        break;
-
-      default:
-        throw CommandError(COMMAND_ERRORS.unsupportedAction(input), input);
+    if (!state.executed) {
+      throwUnsupportedError(input);
     }
   };
 
@@ -81,43 +70,77 @@ const CommandChecker = ({
   };
 };
 
-const handleOnAdd = (input, onAdd) => {
-  const [albumTitle, artistName] = extractAndCheckQuotes(2, input);
-  confirmCallback(COMMANDS.add, onAdd);
-  onAdd(albumTitle, artistName);
+const handleOnAdd = ({ input, lowercaseInput, state, onAdd }) => {
+  if (lowercaseInput.startsWith("add")) {
+    const [albumTitle, artistName] = extractAndCheckQuotes(2, input);
+    confirmCallback(COMMANDS.add, onAdd);
+    onAdd(albumTitle, artistName);
+    state.executed = true;
+  }
 };
 
-const handleOnShowAll = (onShowAll) => {
-  confirmCallback(COMMANDS["show all"], onShowAll);
-  onShowAll();
+const handleOnShowAll = ({ lowercaseInput, state, onShowAll }) => {
+  if (lowercaseInput === COMMANDS["show all"]) {
+    confirmCallback(COMMANDS["show all"], onShowAll);
+    onShowAll();
+    state.executed = true;
+  }
 };
 
-const handleOnShowAllByArtist = (input, onShowAllByArtist) => {
-  const [artistName] = extractAndCheckQuotes(1, input);
-  confirmCallback(COMMANDS["show all by artist"], onShowAllByArtist);
-  onShowAllByArtist(artistName);
+const handleOnShowAllByArtist = ({
+  name,
+  lowercaseInput,
+  state,
+  onShowAllByArtist,
+}) => {
+  if (lowercaseInput.startsWith("show all by")) {
+    const [artistName] = extractAndCheckQuotes(1, name);
+    confirmCallback(COMMANDS["show all by artist"], onShowAllByArtist);
+    onShowAllByArtist(artistName);
+    state.executed = true;
+  }
 };
 
-const handleOnPlay = (title, onPlay) => {
-  const [albumTitle] = extractAndCheckQuotes(1, title);
-  confirmCallback(COMMANDS.play, onPlay);
-  onPlay(albumTitle);
+const handleOnPlay = ({ title, lowercaseInput, state, onPlay }) => {
+  if (lowercaseInput.startsWith("play")) {
+    const [albumTitle] = extractAndCheckQuotes(1, title);
+    confirmCallback(COMMANDS.play, onPlay);
+    onPlay(albumTitle);
+    state.executed = true;
+  }
 };
 
-const handleOnShowUnplayed = (onShowUnplayed) => {
-  confirmCallback(COMMANDS["show unplayed"], onShowUnplayed);
-  onShowUnplayed();
+const handleOnShowUnplayed = ({ lowercaseInput, state, onShowUnplayed }) => {
+  if (lowercaseInput === COMMANDS["show unplayed"]) {
+    confirmCallback(COMMANDS["show unplayed"], onShowUnplayed);
+    onShowUnplayed();
+    state.executed = true;
+  }
 };
 
-const handleOnShowUnplayedByArtist = (name, onShowUnplayedByArtist) => {
-  const [artistName] = extractAndCheckQuotes(1, name);
-  confirmCallback(COMMANDS["show unplayed by artist"], onShowUnplayedByArtist);
-  onShowUnplayedByArtist(artistName);
+const handleOnShowUnplayedByArtist = ({
+  name,
+  lowercaseInput,
+  state,
+  onShowUnplayedByArtist,
+}) => {
+  if (lowercaseInput.startsWith("show unplayed by")) {
+    const [artistName] = extractAndCheckQuotes(1, name);
+    confirmCallback(
+      COMMANDS["show unplayed by artist"],
+      onShowUnplayedByArtist
+    );
+    onShowUnplayedByArtist(artistName);
+    state.executed = true;
+  }
 };
 
-const handleOnQuit = (onQuit) => {
-  confirmCallback(COMMANDS.quit, onQuit);
-  onQuit();
+const handleOnQuit = ({ lowercaseInput, state, onQuit }) => {
+  if (lowercaseInput === COMMANDS.quit) {
+    confirmCallback(COMMANDS.quit, onQuit);
+    onQuit();
+    state.executed = true;
+  }
 };
 
 const confirmCallback = (name, arg) => {
@@ -136,6 +159,10 @@ const extractAndCheckQuotes = (numOfQuotes, input) => {
     throw CommandError(COMMAND_ERRORS.missingData(quotes), input);
   }
   return quotes;
+};
+
+const throwUnsupportedError = (input) => {
+  throw CommandError(COMMAND_ERRORS.unsupportedAction(input), input);
 };
 
 module.exports = { CommandChecker };
